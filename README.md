@@ -25,7 +25,7 @@ nlp-lang
         </dependency>
     </dependencies>
     
-##DWON
+##Download
 
 http://maven.nlpcn.org/org/nlpcn/nlp-lang/
 

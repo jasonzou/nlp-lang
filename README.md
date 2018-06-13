@@ -18,13 +18,6 @@ nlp-lang
         </dependency>
     </dependencies>
     
-<<<<<<< HEAD
-##Download
-
-http://maven.nlpcn.org/org/nlpcn/nlp-lang/
-=======
->>>>>>> 1665ffae0130dd6cd5a642bbeb0cca1056cd62e8
-
 
 #### 这个项目是一个基本包.封装了大多数nlp项目中常用工具
 

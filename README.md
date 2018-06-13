@@ -10,24 +10,20 @@ nlp-lang
 
 ##MAVEN
     
-    <repositories>
-        <repository>
-            <id>mvn-repo</id>
-            <url>http://maven.nlpcn.org/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>org.nlpcn</groupId>
             <artifactId>nlp-lang</artifactId>
-            <version>1.1</version>
+            <version>1.7.6</version>
         </dependency>
     </dependencies>
     
+<<<<<<< HEAD
 ##Download
 
 http://maven.nlpcn.org/org/nlpcn/nlp-lang/
+=======
+>>>>>>> 1665ffae0130dd6cd5a642bbeb0cca1056cd62e8
 
 
 #### 这个项目是一个基本包.封装了大多数nlp项目中常用工具
@@ -38,6 +34,7 @@ http://maven.nlpcn.org/org/nlpcn/nlp-lang/
 * √ 双数组tire树
 * √ 文本断句
 * √ html标签清理
+* √ Viterbi算法增加
 
 
 
@@ -46,6 +43,7 @@ http://maven.nlpcn.org/org/nlpcn/nlp-lang/
 * √ 简繁体转换
 * √ bloomfilter
 * √ 指纹去重 
+* √ SimHash文章相似度计算 
 * √ 词共现统计
 * √ 基于内存的搜索提示 
 * √ WordWeight词频统计,词idf统计,词类别相关度统计 

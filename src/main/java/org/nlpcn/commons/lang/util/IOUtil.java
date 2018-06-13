@@ -1,6 +1,10 @@
 package org.nlpcn.commons.lang.util;
 
+import org.nlpcn.commons.lang.util.logging.Log;
+import org.nlpcn.commons.lang.util.logging.LogFactory;
+
 import java.io.*;
+import java.nio.file.FileSystemNotFoundException;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -10,6 +14,8 @@ import java.util.Map.Entry;
  * @author ansj
  */
 public class IOUtil {
+	private static final Log LOG =  LogFactory.getLog() ;
+
 	public static final String UTF8 = "utf-8";
 	public static final String GBK = "gbk";
 	public static final String TABLE = "\t";
@@ -30,7 +36,7 @@ public class IOUtil {
 		return getReader(new File(path), charEncoding);
 	}
 
-	private static BufferedReader getReader(File file, String charEncoding) throws FileNotFoundException, UnsupportedEncodingException {
+	public static BufferedReader getReader(File file, String charEncoding) throws FileNotFoundException, UnsupportedEncodingException {
 		// TODO Auto-generated method stub
 		InputStream is = new FileInputStream(file);
 		return new BufferedReader(new InputStreamReader(is, charEncoding));
@@ -177,8 +183,9 @@ public class IOUtil {
 	 */
 	public static void close(Reader reader) {
 		try {
-			if (reader != null)
+			if (reader != null) {
 				reader.close();
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -192,8 +199,9 @@ public class IOUtil {
 	 */
 	public static void close(InputStream is) {
 		try {
-			if (is != null)
+			if (is != null) {
 				is.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -264,10 +272,10 @@ public class IOUtil {
 				String readLine = iteartor.next();
 				split = readLine.split("\t");
 				if (split.length < 2) {
-					System.err.println(path + " line:" + index + " has err :" + readLine + " err to load !");
+					LOG.error(path + " line:" + index + " has err :" + readLine + " err to load !");
 					continue;
 				}
-				hm.put((K) ReflectUtil.conversion(split[0], key), (V) ReflectUtil.conversion(split[1], value));
+				hm.put((K) ObjConver.conversion(split[0], key), (V) ObjConver.conversion(split[1], value));
 			}
 		} finally {
 			iteartor.close();
@@ -275,6 +283,50 @@ public class IOUtil {
 		return hm;
 	}
 
+	/**
+	 * 加载一个文件到hashMap
+	 *
+	 * @param is
+	 * @param charEncoding
+	 * @param key
+	 * @param value
+	 * @return
+	 * @throws java.io.UnsupportedEncodingException
+	 */
+	@SuppressWarnings({ "unchecked" })
+	public static <K, V> HashMap<K, V> loadMap(InputStream is, String charEncoding, Class<K> key, Class<V> value) throws UnsupportedEncodingException {
+
+		FileIterator iteartor = null;
+		HashMap<K, V> hm = null;
+		try {
+			iteartor = instanceFileIterator(is, charEncoding);
+			hm = new HashMap<K, V>();
+			String[] split = null;
+			int index = 0;
+			while (iteartor.hasNext()) {
+				index++;
+				String readLine = iteartor.next();
+				split = readLine.split("\t");
+				if (split.length < 2) {
+					LOG.error(" line:" + index + " has err :" + readLine + " err to load !");
+					continue;
+				}
+				hm.put((K) ObjConver.conversion(split[0], key), (V) ObjConver.conversion(split[1], value));
+			}
+		} finally {
+			iteartor.close();
+		}
+		return hm;
+	}
+
+	/**
+	 * 將一個map寫入到文件
+	 * 
+	 * @param hm
+	 * @param path
+	 * @param charEncoding
+	 * @throws IOException
+	 */
 	public static <K, V> void writeMap(Map<K, V> hm, String path, String charEncoding) throws IOException {
 		Iterator<Entry<K, V>> iterator = hm.entrySet().iterator();
 		FileOutputStream fos = null;
@@ -283,13 +335,44 @@ public class IOUtil {
 			fos = new FileOutputStream(path);
 			while (iterator.hasNext()) {
 				next = iterator.next();
-				fos.write(next.getKey().toString().getBytes());
+				fos.write(next.getKey().toString().getBytes(charEncoding));
 				fos.write(TABBYTE);
-				fos.write(next.getValue().toString().getBytes());
+				fos.write(next.getValue().toString().getBytes(charEncoding));
 				fos.write(LINEBYTE);
 			}
 			fos.flush();
 		} finally {
+			if(fos==null){
+				throw new FileNotFoundException(path) ;
+			}
+			fos.close();
+		}
+	}
+
+	/**
+	 * 講一個list寫入到文件
+	 * 
+	 * @param list
+	 * @param path
+	 * @param charEncoding
+	 * @throws IOException
+	 */
+	public static <T> void writeList(List<T> list, String path, String charEncoding) throws IOException {
+		Iterator<T> iterator = list.iterator();
+		FileOutputStream fos = null;
+		T next = null;
+		try {
+			fos = new FileOutputStream(path);
+			while (iterator.hasNext()) {
+				next = iterator.next();
+				fos.write(next.toString().getBytes(charEncoding));
+				fos.write(LINEBYTE);
+			}
+			fos.flush();
+		} finally {
+			if(fos==null){
+				throw new FileNotFoundException(path) ;
+			}
 			fos.close();
 		}
 	}
@@ -300,6 +383,10 @@ public class IOUtil {
 
 	public static List<String> readFile2List(File file, String charEncoding) throws FileNotFoundException, UnsupportedEncodingException {
 		return readFile2List(getReader(file, charEncoding));
+	}
+
+	public static List<String> readFile2List(InputStream inputStream, String charEncoding) throws UnsupportedEncodingException {
+		return readFile2List(getReader(inputStream, charEncoding));
 	}
 
 	/**

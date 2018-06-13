@@ -16,8 +16,16 @@ public class Library {
 		return makeForest(new FileInputStream(path));
 	}
 
+	public static Forest makeForest(String path, String encoding) throws Exception {
+		return makeForest(new FileInputStream(path), encoding);
+	}
+
 	public static Forest makeForest(InputStream inputStream) throws Exception {
 		return makeForest(IOUtil.getReader(inputStream, "UTF-8"));
+	}
+
+	public static Forest makeForest(InputStream inputStream, String encoding) throws Exception {
+		return makeForest(IOUtil.getReader(inputStream, encoding));
 	}
 
 	public static Forest makeForest(BufferedReader br) throws Exception {
@@ -48,8 +56,9 @@ public class Library {
 	 * @throws Exception
 	 */
 	private static Forest makeLibrary(BufferedReader br, Forest forest) throws Exception {
-		if (br == null)
+		if (br == null) {
 			return forest;
+		}
 		try {
 			String temp = null;
 			while ((temp = br.readLine()) != null) {
@@ -110,8 +119,9 @@ public class Library {
 		char[] chars = word.toCharArray();
 
 		for (int i = 0; i < chars.length; i++) {
-			if (branch == null)
+			if (branch == null) {
 				return;
+			}
 			if (chars.length == i + 1) {
 				branch.add(new Forest(chars[i], -1, null));
 			}

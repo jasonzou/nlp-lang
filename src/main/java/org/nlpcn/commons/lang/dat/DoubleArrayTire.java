@@ -20,6 +20,12 @@ public class DoubleArrayTire {
 	private DoubleArrayTire() {
 	}
 
+
+	public DoubleArrayTire(Item[] dat){
+		this.dat = dat ;
+		this.arrayLength = dat.length ;
+	}
+
 	/**
 	 * 获得dat数组
 	 */
@@ -53,8 +59,9 @@ public class DoubleArrayTire {
 		}
 		for (int i = 1; i < str.length(); i++) {
 			final int checkValue = item.index;
-			if (item.base + str.charAt(i) > dat.length - 1)
+			if (item.base + str.charAt(i) > dat.length - 1) {
 				return null;
+			}
 
 			item = dat[item.base + str.charAt(i)];
 			if (item == null) {
